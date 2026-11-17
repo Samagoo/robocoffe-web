@@ -57,10 +57,14 @@ def db(migrated_database):
 def client(db):
     from fastapi.testclient import TestClient
 
-    from app.db import get_db
+    from contextlib import nullcontext
+
+    from app.db import get_db, get_session_factory
     from app.main import app
 
     app.dependency_overrides[get_db] = lambda: db
+    # WebSocket snapshots use the same rolled-back test session (nullcontext: don't close it)
+    app.dependency_overrides[get_session_factory] = lambda: (lambda: nullcontext(db))
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()

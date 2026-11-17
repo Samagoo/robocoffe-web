@@ -7,7 +7,19 @@ export interface Health {
   database: { status: "ok" | "error"; db_time?: string; schema_revision?: string | null; detail?: string };
   robot: { host: string; port: number; link: string };
   scale: { ingestion: string };
+  realtime: { admin_clients: number };
 }
+
+// ---- WebSocket /api/ws/admin (docs/websocket.md). Envelope: {type, ts (UTC ISO), data}
+export type ServerMessage =
+  | { type: "hello"; ts: string; data: { version: string; snapshot_limit: number } }
+  | { type: "snapshot"; ts: string; data: { orders: Order[] } }
+  | { type: "order.created"; ts: string; data: Order }
+  | { type: "order.updated"; ts: string; data: Order }
+  | { type: "pong"; ts: string; data: Record<string, never> }
+  | { type: "error"; ts: string; data: { detail: string } };
+
+export type FeedStatus = "connecting" | "live" | "reconnecting";
 
 export interface Product {
   code: string;

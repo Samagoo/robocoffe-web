@@ -37,6 +37,10 @@ Columns for later phases already exist and stay NULL until those phases fill the
 | `robot_events` | `received_at`, `event_type`, `robot_t` (robot `t=`), `robot_msg_id` (`orden=`), `order_id`, `fields` (JSONB), `raw` | Phase 4 |
 | `scale_readings` | `received_at`, `grams`, `device_time_ms`, `raw`, `order_id` | Scale phase |
 
+**Folios are unique, not gapless.** After an unclean PostgreSQL shutdown (crash, power cut, killed
+container), the id sequence can skip up to 32 values (P-0001 → P-0034). That's normal PostgreSQL
+behaviour. Don't use folio gaps to count orders.
+
 **Configurable business vocabulary:** `backend/app/order_config.json` holds the products (C1–C3),
 the tables (number → `MESA*` destination, distance in m) and the **provisional** status names. The DB
 stores status as plain text, so renaming a status needs a backend restart, not a migration.
@@ -54,7 +58,7 @@ stores status as plain text, so renaming a status needs a backend restart, not a
 |---|---|---|
 | 1 ✅ | Docker Compose (db, backend, frontend), `/api/health`, status page | `docker compose up` → page shows DB ok |
 | 2 ✅ | All four tables (Alembic 0001), `order_config.json`, `POST/GET /api/orders`, `GET /api/catalog`, customer page | An order placed on the page is in PostgreSQL |
-| 3 | WebSocket `/api/ws/admin`, admin page | A new order appears on the admin page without a refresh |
+| 3 ✅ | WebSocket `/api/ws/admin` (hello + snapshot + `order.created`/`order.updated`, see `websocket.md`), admin page `/admin` | A new order appears on the admin page without a refresh |
 | 4 | Robot TCP link, dispatch endpoint, `EVT` → `robot_events` | **Milestone:** dispatch → `main_real` receives `ORDEN` → robot moves |
 | 5 | Scale bridge + `/api/scale/readings`, `RETIRADO` forwarding | A cup lift on the adapter ends the wait at the table |
 | 6 | Order status driven by robot events (once the workflow is approved) | The admin page follows the robot's trip live |

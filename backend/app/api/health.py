@@ -5,6 +5,7 @@ from fastapi import APIRouter
 
 from ..config import settings
 from ..db import check_db
+from ..realtime.manager import admin_feed
 
 router = APIRouter(tags=["health"])
 
@@ -25,4 +26,5 @@ def health():
         },
         # Scale-bridge phase: readings forwarded from the Bluetooth COM port
         "scale": {"ingestion": "not_implemented"},
+        "realtime": {"admin_clients": admin_feed.count},
     }

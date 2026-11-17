@@ -22,7 +22,8 @@ docker compose up --build
 
 | URL | What |
 |---|---|
-| http://localhost:5173 | Customer ordering page |
+| http://localhost:5173 | Customer ordering page (temporary validation UI) |
+| http://localhost:5173/admin | Admin: live orders over WebSocket ([`docs/websocket.md`](docs/websocket.md)) |
 | http://localhost:5173/status | Platform status + recent orders |
 | http://localhost:8000/api/health | Backend health JSON (includes the applied schema revision) |
 | http://localhost:8000/api/orders | Orders JSON (newest first, `?status=` `&limit=`) |

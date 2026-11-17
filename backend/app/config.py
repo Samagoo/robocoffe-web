@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    app_version: str = "0.2.0-phase2"
+    app_version: str = "0.3.0-phase3"
     database_url: str = "postgresql+psycopg://robocoffee:robocoffee@localhost:5432/robocoffee"
 
     # Products, tables and provisional order statuses (no migration needed to change them)

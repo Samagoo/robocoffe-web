@@ -1,5 +1,5 @@
 """Database engine, session and declarative base."""
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 
 from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
@@ -26,6 +26,12 @@ NAMING = {
 
 class Base(DeclarativeBase):
     metadata = MetaData(naming_convention=NAMING)
+
+
+def get_session_factory() -> Callable[[], Session]:
+    """Dependency for long-lived endpoints (WebSocket): open a short session only when needed,
+    instead of holding a pooled connection for the whole life of the socket."""
+    return SessionLocal
 
 
 def get_db() -> Iterator[Session]:
