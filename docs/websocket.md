@@ -17,8 +17,9 @@ Live feed for the admin page. JSON text frames. Through the Vite dev server:
 |---|---|---|
 | `hello` | Right after connecting | `{version, snapshot_limit}` |
 | `snapshot` | Right after `hello` | `{orders: Order[]}`: newest 100, same shape as `GET /api/orders` |
+| `robot.status` | Right after `snapshot`; then when it changes, at least every 5 s | `RobotStatus`: same as `GET /api/robot` (see `robot-integration.md`) |
 | `order.created` | After a new order is **committed** | `Order` |
-| `order.updated` | After an order changes (status, timestamps, weights) — **used from Phase 4** | `Order` |
+| `order.updated` | After an order changes: dispatch accepted, rejected or unanswered (Phase 4) | `Order` |
 | `pong` | Reply to `ping` | `{}` |
 | `error` | Client sent something unknown | `{detail}` |
 
@@ -36,7 +37,8 @@ Live feed for the admin page. JSON text frames. Through the Vite dev server:
    Duplicates (the same order in `snapshot` and `order.created`) are expected and harmless.
 2. **Reconnect** with backoff (1 s, doubling, max 10 s). Every reconnection gets a fresh `snapshot`,
    so updates missed while disconnected are recovered. There's no replay of individual messages.
-3. Ignore unknown `type`s, so new message types (Phase 4: robot status) don't break old pages.
+3. Ignore unknown `type`s, so new message types don't break old pages.
+4. While disconnected, treat the robot status as unknown. A fresh `robot.status` comes with every reconnection.
 
 ## Server rules
 

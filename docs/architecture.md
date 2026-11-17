@@ -48,8 +48,8 @@ stores status as plain text, so renaming a status needs a backend restart, not a
 ## Robot-link rules inherited from `fsm.py`
 
 - **One order at a time.** The robot replies `ERROR ORDEN … OCUPADO` otherwise. The queue lives in the backend.
-- **Message ids must always increase** (`ID_REPETIDO` otherwise). The backend uses millisecond timestamps
-  so ids keep increasing across backend restarts.
+- **Message ids must always increase** (`ID_REPETIDO` otherwise). `ClienteRobot.nuevo_id()` uses
+  deciseconds since 1970, so ids keep increasing across backend and robot restarts.
 - `ESTADO` / `PING` are always answered and never change state, so they're safe for health checks.
 
 ## Phases
@@ -59,6 +59,6 @@ stores status as plain text, so renaming a status needs a backend restart, not a
 | 1 ✅ | Docker Compose (db, backend, frontend), `/api/health`, status page | `docker compose up` → page shows DB ok |
 | 2 ✅ | All four tables (Alembic 0001), `order_config.json`, `POST/GET /api/orders`, `GET /api/catalog`, customer page | An order placed on the page is in PostgreSQL |
 | 3 ✅ | WebSocket `/api/ws/admin` (hello + snapshot + `order.created`/`order.updated`, see `websocket.md`), admin page `/admin` | A new order appears on the admin page without a refresh |
-| 4 | Robot TCP link, dispatch endpoint, `EVT` → `robot_events` | **Milestone:** dispatch → `main_real` receives `ORDEN` → robot moves |
+| 4 ✅ | `RobotLink` over the team's `ClienteRobot` (unchanged), `POST /api/orders/{id}/dispatch`, `GET /api/robot`, every `EVT` → `robot_events`, robot panel on `/admin` (see `robot-integration.md`) | **Milestone:** dispatch → `main_real` receives `ORDEN` → robot moves |
 | 5 | Scale bridge + `/api/scale/readings`, `RETIRADO` forwarding | A cup lift on the adapter ends the wait at the table |
 | 6 | Order status driven by robot events (once the workflow is approved) | The admin page follows the robot's trip live |

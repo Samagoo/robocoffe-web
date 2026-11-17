@@ -32,6 +32,7 @@ async def admin_ws(websocket: WebSocket, session_factory=Depends(get_session_fac
                               {"version": settings.app_version, "snapshot_limit": SNAPSHOT_LIMIT})
         orders = await run_in_threadpool(_snapshot, session_factory)
         await admin_feed.send(websocket, "snapshot", {"orders": orders})
+        await admin_feed.send(websocket, "robot.status", websocket.app.state.robot_link.status())
 
         while True:                                   # client -> server: only "ping" for now
             text = await websocket.receive_text()

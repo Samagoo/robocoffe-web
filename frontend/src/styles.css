@@ -42,6 +42,14 @@ button.primary:disabled { opacity: 0.5; cursor: not-allowed; }
 .folio { font-size: 2.2rem; font-weight: 700; letter-spacing: 1px; }
 table.data { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
 table.data th, table.data td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); }
+.robot-panel { padding: 16px 20px; margin-bottom: 24px; }
+.robot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px 20px; }
+.robot-grid > div { display: flex; flex-direction: column; gap: 2px; }
+.robot-grid small { color: var(--muted); }
+button.small { padding: 6px 14px; font-size: 0.9rem; border-radius: 8px; }
+.note { font-size: 0.85rem; }
+.note.bad { color: var(--bad); }
+.note.ok { color: var(--ok); }
 @keyframes flash { from { background: #fff3c4; } to { background: transparent; } }
 tr.new-row td { animation: flash 4s ease-out; }
 .kv td:first-child { font-weight: 600; padding-right: 16px; }

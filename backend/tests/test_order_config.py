@@ -18,6 +18,8 @@ def _write(tmp_path, **override):
         "tables": [{"number": 1, "robot_destination": "MESA1", "distance_m": 1.0}],
         "statuses": ["A", "B"],
         "initial_status": "A",
+        "dispatch_from": ["A"],
+        "dispatched_status": "B",
     }
     base.update(override)
     p = tmp_path / "cfg.json"
@@ -26,8 +28,15 @@ def _write(tmp_path, **override):
 
 
 def test_initial_status_must_be_listed(tmp_path):
-    with pytest.raises(ValueError, match="initial_status"):
+    with pytest.raises(ValueError, match="'Z'"):
         load_order_config(_write(tmp_path, initial_status="Z"))
+
+
+def test_dispatch_statuses_must_be_listed(tmp_path):
+    with pytest.raises(ValueError, match="'Q'"):
+        load_order_config(_write(tmp_path, dispatched_status="Q"))
+    with pytest.raises(ValueError, match="'Q'"):
+        load_order_config(_write(tmp_path, dispatch_from=["Q"]))
 
 
 def test_duplicate_statuses_rejected(tmp_path):

@@ -1,0 +1,12 @@
+# Nucleo (maquina de estados, simulador, cliente, herramientas): solo biblioteca estandar de Python 3.10+
+
+# Robot real (main_real.py, probar_movimiento.py, real/):
+#   git clone https://github.com/DrLizarraga/oak9lib && pip install -e oak9lib
+
+# Opcionales
+openpyxl        # registro_pruebas.py: escribe el Excel del dashboard
+pytest          # pruebas: python -m pytest -q tests   (sin pytest: python tests/correr_pruebas.py)
+
+# Ejemplo de backend (cliente/ejemplo_fastapi.py)
+fastapi
+uvicorn

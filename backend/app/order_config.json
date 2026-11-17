@@ -16,5 +16,9 @@
 
   "_statuses_comment": "PROVISIONAL names: not approved yet (09_pendientes, contradiction 1). Rename freely; the DB stores status as plain text.",
   "statuses": ["PENDIENTE", "DESPACHADA", "EN_CAMINO", "EN_MESA", "ENTREGADA", "RECHAZADA", "CANCELADA"],
-  "initial_status": "PENDIENTE"
+  "initial_status": "PENDIENTE",
+
+  "_dispatch_comment": "Dispatch to the robot (Phase 4): orders in dispatch_from can be sent; when the robot accepts ORDEN they move to dispatched_status. Rejections keep the status.",
+  "dispatch_from": ["PENDIENTE"],
+  "dispatched_status": "DESPACHADA"
 }

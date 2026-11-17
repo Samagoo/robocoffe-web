@@ -13,6 +13,8 @@ _dev_url = make_url(os.environ.get(
     "DATABASE_URL", "postgresql+psycopg://robocoffee:robocoffee@localhost:5432/robocoffee"))
 _test_url = _dev_url.set(database=f"{_dev_url.database}_test")
 os.environ["DATABASE_URL"] = _test_url.render_as_string(hide_password=False)
+# Never talk to a real robot/simulator from tests; test_robot.py starts a fake one explicitly
+os.environ["ROBOT_ENABLED"] = "false"
 
 
 def _recreate_test_database():

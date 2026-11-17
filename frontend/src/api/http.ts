@@ -29,6 +29,18 @@ export async function postJson<T>(path: string, body: unknown): Promise<T> {
   return (await res.json()) as T;
 }
 
+/** POST /api/orders/{id}/dispatch. Returns the HTTP status and body; never throws for 4xx/5xx. */
+export async function dispatchOrder(orderId: number): Promise<{ status: number; body: any }> {
+  const res = await fetch(`/api/orders/${orderId}/dispatch`, { method: "POST" });
+  let body: any = null;
+  try {
+    body = await res.json();
+  } catch {
+    /* empty */
+  }
+  return { status: res.status, body };
+}
+
 /** UTC ISO timestamp -> local date/time of this computer, e.g. 17/11/2026, 03:41:20 */
 export function localTime(iso: string | null): string {
   return iso ? new Date(iso).toLocaleString("es-MX", { hour12: false }) : "—";

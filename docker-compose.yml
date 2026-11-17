@@ -34,6 +34,8 @@ services:
       - ./backend/app:/code/app
       - ./backend/migrations:/code/migrations   # new migration files appear on the host
       - ./backend/tests:/code/tests
+      # The robot team's ClienteRobot, used unchanged (read-only). Folder must contain robocoffe_cliente.py
+      - ${ROBOT_CLIENT_HOST_DIR:-./robot/cliente}:/code/robot_cliente:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"   # reach main_real.py (:9000) on the Windows host
     depends_on:

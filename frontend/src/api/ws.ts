@@ -1,7 +1,7 @@
 // Live order feed over WebSocket /api/ws/admin, with automatic reconnection.
 // Every (re)connection gets a fresh snapshot, so nothing missed while offline is lost.
 import { useEffect, useRef, useState } from "react";
-import type { FeedStatus, Order, ServerMessage } from "../types";
+import type { FeedStatus, Order, RobotStatus, ServerMessage } from "../types";
 
 const PING_MS = 25_000;
 const RETRY_MIN_MS = 1_000;
@@ -23,6 +23,7 @@ export interface OrdersFeed {
   status: FeedStatus;
   newIds: Set<number>;        // arrived live since the page opened (for highlighting)
   lastMessageAt: string | null;
+  robot: RobotStatus | null;  // latest robot.status
 }
 
 export function useOrdersFeed(): OrdersFeed {
@@ -30,6 +31,7 @@ export function useOrdersFeed(): OrdersFeed {
   const [orders, setOrders] = useState<Order[]>([]);
   const [newIds, setNewIds] = useState<Set<number>>(new Set());
   const [lastMessageAt, setLastMessageAt] = useState<string | null>(null);
+  const [robot, setRobot] = useState<RobotStatus | null>(null);
   const store = useRef(new Map<number, Order>());
 
   useEffect(() => {
@@ -70,6 +72,9 @@ export function useOrdersFeed(): OrdersFeed {
             upsert(store.current, msg.data);
             publish();
             break;
+          case "robot.status":
+            setRobot(msg.data);
+            break;
           case "error":
             console.warn("[ws] server error:", msg.data.detail);
             break;
@@ -79,6 +84,7 @@ export function useOrdersFeed(): OrdersFeed {
         window.clearInterval(pingTimer);
         if (stopped) return;
         setStatus("reconnecting");
+        setRobot(null); // unknown until the next robot.status
         retryTimer = window.setTimeout(connect, retryMs);
         retryMs = Math.min(retryMs * 2, RETRY_MAX_MS);
       };
@@ -93,5 +99,5 @@ export function useOrdersFeed(): OrdersFeed {
     };
   }, []);
 
-  return { orders, status, newIds, lastMessageAt };
+  return { orders, status, newIds, lastMessageAt, robot };
 }

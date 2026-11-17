@@ -16,7 +16,8 @@ def _order(client, **kw):
 def _handshake(ws):
     hello = ws.receive_json()
     snap = ws.receive_json()
-    assert hello["type"] == "hello" and snap["type"] == "snapshot"
+    robot = ws.receive_json()                         # Phase 4: robot.status follows the snapshot
+    assert (hello["type"], snap["type"], robot["type"]) == ("hello", "snapshot", "robot.status")
     return hello, snap
 
 

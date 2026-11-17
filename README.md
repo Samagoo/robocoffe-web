@@ -27,7 +27,12 @@ docker compose up --build
 | http://localhost:5173/status | Platform status + recent orders |
 | http://localhost:8000/api/health | Backend health JSON (includes the applied schema revision) |
 | http://localhost:8000/api/orders | Orders JSON (newest first, `?status=` `&limit=`) |
+| http://localhost:8000/api/robot | Robot status (connection, state, order, battery, pose) |
 | http://localhost:8000/docs | Interactive API docs |
+
+**Robot:** run `python servidor_simulado.py` (or `main_real.py --host <robot ip>`) natively on this PC
+before or after `docker compose up`. The backend connects by itself. See
+[`docs/robot-integration.md`](docs/robot-integration.md).
 
 Stop: `Ctrl+C`, then `docker compose down`. Add `-v` to also delete the database volume.
 

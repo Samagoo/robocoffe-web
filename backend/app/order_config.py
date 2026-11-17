@@ -28,18 +28,21 @@ class OrderConfig(BaseModel):
     tables: list[Table]
     statuses: list[str]
     initial_status: str
+    dispatch_from: list[str]        # statuses from which an order can be sent to the robot
+    dispatched_status: str          # status once the robot accepts ORDEN
 
     @model_validator(mode="after")
     def _check(self):
         if not self.products or not self.tables or not self.statuses:
             raise ValueError("products, tables and statuses must not be empty")
-        if self.initial_status not in self.statuses:
-            raise ValueError(f"initial_status {self.initial_status!r} is not in statuses")
         for name, values in (("product codes", [p.code for p in self.products]),
                              ("table numbers", [t.number for t in self.tables]),
                              ("statuses", self.statuses)):
             if len(values) != len(set(values)):
                 raise ValueError(f"duplicate {name}")
+        for name in [self.initial_status, self.dispatched_status, *self.dispatch_from]:
+            if name not in self.statuses:
+                raise ValueError(f"status {name!r} (initial/dispatch) is not in statuses")
         return self
 
     def product(self, code: str) -> Product | None:

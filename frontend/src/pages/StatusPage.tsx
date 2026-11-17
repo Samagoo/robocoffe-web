@@ -54,7 +54,8 @@ export default function StatusPage() {
                  ok={db.status === "ok"} />
             <Row label="Schema revision" value={db.schema_revision ?? "none (migrations not applied)"}
                  ok={!!db.schema_revision} />
-            <Row label="Robot link" value={`${health.robot.host}:${health.robot.port} · ${health.robot.link}`} />
+            <Row label="Robot link" value={`${health.robot.host}:${health.robot.port} · ${health.robot.link}`
+                 + (health.robot.state ? ` · ${health.robot.state}` : "")} ok={health.robot.link === "connected"} />
             <Row label="Scale (Bluetooth)" value={health.scale.ingestion} />
             <Row label="Admin pages connected" value={String(health.realtime.admin_clients)} />
             <Row label="Server time (UTC)" value={health.time_utc} />
