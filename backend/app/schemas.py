@@ -1,5 +1,5 @@
 """Pydantic request/response models for the REST API."""
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -32,6 +32,47 @@ class OrderCreate(BaseModel):
     @classmethod
     def _blank_to_none(cls, v: str | None) -> str | None:
         return v.strip() or None if v is not None else None
+
+
+class ScaleReadingIn(BaseModel):
+    """One 'PESO:<g>' line, parsed and stamped by scale_bridge."""
+    model_config = ConfigDict(allow_inf_nan=False)
+
+    raw: str = Field(max_length=200)
+    grams: float = Field(ge=-10_000, le=10_000)     # sanity only; no filtering, no decisions here
+    received_at: datetime                            # PC time at COM reception
+
+    @field_validator("raw")
+    @classmethod
+    def _peso_only(cls, v: str) -> str:
+        if not v.strip().startswith("PESO:"):
+            raise ValueError("only PESO:<g> lines are accepted")
+        return v.strip()
+
+    @field_validator("received_at")
+    @classmethod
+    def _aware_and_not_future(cls, v: datetime) -> datetime:
+        if v.tzinfo is None or v.utcoffset() is None:
+            raise ValueError("received_at must include a UTC offset")
+        if v - datetime.now(timezone.utc) > timedelta(seconds=60):
+            raise ValueError("received_at is in the future (check the PC clock)")
+        return v
+
+
+class ScaleBatchIn(BaseModel):
+    source: str = Field(min_length=1, max_length=60)      # COM port, e.g. "COM5"
+    readings: list[ScaleReadingIn] = Field(max_length=1000)
+
+
+class ScaleReadingOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    received_at: datetime
+    ingested_at: datetime
+    grams: float
+    raw: str | None
+    source: str
 
 
 class OrderOut(BaseModel):

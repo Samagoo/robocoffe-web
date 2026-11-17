@@ -46,3 +46,4 @@ docker compose up --build
 | Rev | Content |
 |---|---|
 | 0001 | `orders`, `order_events`, `robot_events`, `scale_readings` |
+| 0002 | `scale_readings.source` (COM port), `scale_readings.ingested_at` (backend time) |

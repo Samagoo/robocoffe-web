@@ -83,13 +83,17 @@ class RobotEvent(Base):
 
 
 class ScaleReading(Base):
-    """Load-cell readings forwarded by scale_bridge (filled from the scale phase)."""
+    """Every 'PESO:<g>' line from the adapter, as forwarded by scale_bridge (Phase 5.1)."""
     __tablename__ = "scale_readings"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    # PC time when the bridge read the line from the COM port (the adapter has no clock)
     received_at: Mapped[datetime] = mapped_column(TS, server_default=func.now(), index=True)
     grams: Mapped[float] = mapped_column(Float)
-    device_time_ms: Mapped[int | None] = mapped_column(BigInteger)  # Arduino millis(), if sent
-    raw: Mapped[str | None] = mapped_column(Text)
+    device_time_ms: Mapped[int | None] = mapped_column(BigInteger)  # unused: the firmware sends no time
+    raw: Mapped[str | None] = mapped_column(Text)                   # the line exactly as received
+    # "COM5" for the real adapter; anything else (tests) is kept apart in analysis
+    source: Mapped[str] = mapped_column(String(60), server_default=text("'unknown'"), index=True)
+    ingested_at: Mapped[datetime] = mapped_column(TS, server_default=func.now())  # backend DB time
     order_id: Mapped[int | None] = mapped_column(
         ForeignKey("orders.id", ondelete="SET NULL"), index=True)

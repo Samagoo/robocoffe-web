@@ -18,7 +18,19 @@ def test_health_reports_db_and_schema_revision(client):
     assert r.status_code == 200
     data = r.json()
     assert data["status"] == "ok"
-    assert data["database"]["schema_revision"] == "0001"
+    assert data["database"]["schema_revision"] == _alembic_head()
+
+
+def _alembic_head() -> str:
+    from pathlib import Path
+
+    from alembic.config import Config
+    from alembic.script import ScriptDirectory
+
+    root = Path(__file__).resolve().parents[1]
+    cfg = Config(str(root / "alembic.ini"))
+    cfg.set_main_option("script_location", str(root / "migrations"))
+    return ScriptDirectory.from_config(cfg).get_current_head()
 
 
 # ---------------------------------------------------------------- POST /api/orders

@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from .api import health, orders, robot, ws
+from .api import health, orders, robot, scale, ws
 from .config import settings
 from .db import get_session_factory
 from .order_config import get_order_config
@@ -33,4 +33,5 @@ app = FastAPI(title="RoboCoffee Platform", version=settings.app_version, lifespa
 app.include_router(health.router, prefix="/api")
 app.include_router(orders.router, prefix="/api")
 app.include_router(robot.router, prefix="/api")
+app.include_router(scale.router, prefix="/api")
 app.include_router(ws.router, prefix="/api")
