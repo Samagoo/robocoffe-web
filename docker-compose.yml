@@ -32,6 +32,8 @@ services:
       - "8000:8000"
     volumes:
       - ./backend/app:/code/app
+      - ./backend/migrations:/code/migrations   # new migration files appear on the host
+      - ./backend/tests:/code/tests
     extra_hosts:
       - "host.docker.internal:host-gateway"   # reach main_real.py (:9000) on the Windows host
     depends_on:

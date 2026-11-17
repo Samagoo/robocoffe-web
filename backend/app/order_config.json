@@ -1,0 +1,20 @@
+{
+  "_comment": "Business configuration. Editing this file needs NO database migration; restart the backend to apply.",
+
+  "products": [
+    { "code": "C1", "name": "Americano" },
+    { "code": "C2", "name": "Latte" },
+    { "code": "C3", "name": "Frappé" }
+  ],
+
+  "_tables_comment": "number -> robot destination (protocolo.py DESTINOS) and distance in metres. Distances are <POR MEDIR>: update after measuring with tape.",
+  "tables": [
+    { "number": 1, "robot_destination": "MESA1", "distance_m": 1.0 },
+    { "number": 2, "robot_destination": "MESA2", "distance_m": 2.0 },
+    { "number": 3, "robot_destination": "MESA3", "distance_m": 3.0 }
+  ],
+
+  "_statuses_comment": "PROVISIONAL names: not approved yet (09_pendientes, contradiction 1). Rename freely; the DB stores status as plain text.",
+  "statuses": ["PENDIENTE", "DESPACHADA", "EN_CAMINO", "EN_MESA", "ENTREGADA", "RECHAZADA", "CANCELADA"],
+  "initial_status": "PENDIENTE"
+}

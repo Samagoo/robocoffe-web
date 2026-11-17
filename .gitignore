@@ -5,3 +5,4 @@ __pycache__/
 node_modules/
 dist/
 transiciones_*.csv
+.pytest_cache/

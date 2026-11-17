@@ -22,8 +22,22 @@ docker compose up --build
 
 | URL | What |
 |---|---|
-| http://localhost:5173 | Web app (status page in Phase 1) |
-| http://localhost:8000/api/health | Backend health JSON |
+| http://localhost:5173 | Customer ordering page |
+| http://localhost:5173/status | Platform status + recent orders |
+| http://localhost:8000/api/health | Backend health JSON (includes the applied schema revision) |
+| http://localhost:8000/api/orders | Orders JSON (newest first, `?status=` `&limit=`) |
 | http://localhost:8000/docs | Interactive API docs |
 
 Stop: `Ctrl+C`, then `docker compose down`. Add `-v` to also delete the database volume.
+
+Database migrations run automatically on backend start. See [`docs/migrations.md`](docs/migrations.md).
+Products, tables and the provisional order statuses are in `backend/app/order_config.json`.
+
+## Tests
+
+```bat
+docker compose exec backend pytest -q
+```
+
+Tests use a separate `robocoffee_test` database, rebuilt from the migrations on every run.
+Your development data is never touched.
